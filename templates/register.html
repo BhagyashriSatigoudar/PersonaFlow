@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | PersonaFlow</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef4ff, #f8f9fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 900px;
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(30, 50, 90, 0.15);
+        }
+
+        .left {
+            background: linear-gradient(145deg, #2563eb, #4f46e5);
+            color: white;
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+
+        .left h1 {
+            font-size: 34px;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .left p {
+            color: #dbeafe;
+            line-height: 1.7;
+        }
+
+        .features {
+            margin-top: 35px;
+        }
+
+        .features div {
+            margin: 15px 0;
+            color: #eff6ff;
+        }
+
+        .right {
+            padding: 45px;
+        }
+
+        .right h2 {
+            font-size: 28px;
+            color: #172033;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #7b8494;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #3f4857;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #dce2ea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb18;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 13px;
+            color: #7b8494;
+        }
+
+        .login a {
+            color: #2563eb;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        @media(max-width: 700px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .left {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left">
+        <div class="logo">◈ PersonaFlow</div>
+
+        <h1>Build your personal profile.</h1>
+
+        <p>
+            Track your financial activities, study patterns,
+            and daily habits in one intelligent platform.
+        </p>
+
+        <div class="features">
+            <div>✓ Personal profile management</div>
+            <div>✓ Finance, study & habit tracking</div>
+            <div>✓ Secure activity history</div>
+            <div>✓ PostgreSQL powered data storage</div>
+        </div>
+    </div>
+
+    <div class="right">
+
+        <h2>Create Account</h2>
+
+        <p class="subtitle">
+            Start building your personalized profile.
+        </p>
+
+        <form method="POST" action="/register">
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Enter your full name"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required>
+            </div>
+
+            <div class="row">
+
+                <div class="form-group">
+                    <label>Age</label>
+                    <input
+                        type="number"
+                        name="age"
+                        placeholder="Age"
+                        min="1"
+                        max="120">
+                </div>
+
+                <div class="form-group">
+                    <label>Occupation</label>
+                    <input
+                        type="text"
+                        name="occupation"
+                        placeholder="Student / Engineer">
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Create a password"
+                    required>
+            </div>
+
+            <button class="button" type="submit">
+                Create Account →
+            </button>
+
+        </form>
+
+        <div class="login">
+            Already have an account?
+            <a href="/login">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

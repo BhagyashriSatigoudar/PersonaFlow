@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity History | PersonaFlow</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            margin: 10px;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #4f8cff;
+        }
+
+        .nav a {
+            display: block;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 7px;
+            color: #9da8b8;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #202b3d;
+            color: white;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 15px;
+        }
+
+        .logout a {
+            color: #ff7b85;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 7px;
+        }
+
+        .header p {
+            color: #8792a3;
+            font-size: 13px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e4e9f0;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(20,30,50,.04);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: #4f46b5;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px;
+            background: #f7f9fc;
+            color: #687386;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px 13px;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #fafbfc;
+        }
+
+        .type {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .finance {
+            background: #fff3e8;
+            color: #c76a15;
+        }
+
+        .study {
+            background: #f0ebff;
+            color: #7656d1;
+        }
+
+        .habit {
+            background: #e9f8f1;
+            color: #21845b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #8b95a5;
+            font-size: 13px;
+        }
+
+        @media(max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .card {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            ◈ Persona<span>Flow</span>
+        </div>
+
+        <div class="nav">
+
+            <a href="/dashboard">
+                ◉ Dashboard
+            </a>
+
+            <a href="/profile">
+                ◎ My Profile
+            </a>
+
+            <a href="/finance">
+                ₹ Finance
+            </a>
+
+            <a href="/study">
+                ▤ Study
+            </a>
+
+            <a href="/habit">
+                ◐ Habits
+            </a>
+            
+            <a href="/simulation">Simulation</a>
+            
+            <a href="/history" class="active">
+                ◷ Activity History
+            </a>
+
+        </div>
+
+        <div class="logout">
+            <a href="/logout">↪ Logout</a>
+        </div>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="header">
+
+            <h1>Activity History</h1>
+
+            <p>
+                View your recorded activities and behavioral data.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h2>
+                    Recent Activities
+                </h2>
+
+                <span class="badge">
+                    User Activity
+                </span>
+
+            </div>
+
+
+            {% if activities %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Activity</th>
+                        <th>Description</th>
+                        <th>Date & Time</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for activity in activities %}
+
+                    <tr>
+
+                        <td>
+
+                            {% if activity[0] == "Finance" %}
+
+                                <span class="type finance">
+                                    💰 Finance
+                                </span>
+
+                            {% elif activity[0] == "Study" %}
+
+                                <span class="type study">
+                                    📚 Study
+                                </span>
+
+                            {% else %}
+
+                                <span class="type habit">
+                                    ✓ Habit
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ activity[1] }}
+                        </td>
+
+                        <td>
+                            {{ activity[2] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+                <div class="empty">
+
+                    <div style="font-size:35px; margin-bottom:10px;">
+                        ◷
+                    </div>
+
+                    No activity recorded yet.
+
+                    <br>
+
+                    Start adding Finance, Study or Habit data.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</body>
+</html>

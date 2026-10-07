@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | PersonaFlow</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        /* ================= LAYOUT ================= */
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 205px;
+            background: #111827;
+            color: white;
+            padding: 22px 12px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .logo {
+            font-size: 19px;
+            font-weight: bold;
+            padding: 8px 10px 25px;
+        }
+
+        .logo span {
+            color: #4f8cff;
+        }
+
+        .nav-title {
+            font-size: 9px;
+            color: #718096;
+            margin: 15px 8px 7px;
+            text-transform: uppercase;
+        }
+
+        .nav a {
+            display: block;
+            padding: 10px 9px;
+            margin: 3px 0;
+            border-radius: 6px;
+            color: #aab4c3;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #202b3d;
+            color: white;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 20px;
+            left: 12px;
+            right: 12px;
+        }
+
+        .logout a {
+            display: block;
+            color: #ff7b85;
+            padding: 10px;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 205px;
+            width: calc(100% - 205px);
+            padding: 25px 28px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .top h1 {
+            font-size: 21px;
+            margin-bottom: 5px;
+        }
+
+        .top p {
+            color: #8490a0;
+            font-size: 10px;
+        }
+
+        .avatar {
+            width: 31px;
+            height: 31px;
+            background: #e8efff;
+            color: #2563eb;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* ================= SUMMARY CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 13px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border: 1px solid #e5e9f0;
+            border-radius: 9px;
+            box-shadow: 0 3px 12px rgba(20,30,50,.04);
+        }
+
+        .card small {
+            color: #8792a3;
+            font-size: 8px;
+        }
+
+        .card h2 {
+            font-size: 21px;
+            margin: 7px 0;
+        }
+
+        .green {
+            color: #1f9d68;
+        }
+
+        .blue {
+            color: #2563eb;
+        }
+
+        .purple {
+            color: #7656d1;
+        }
+
+        .orange {
+            color: #d88927;
+        }
+
+        .trend {
+            font-size: 8px;
+            color: #1f9d68;
+        }
+
+        /* ================= DASHBOARD GRID ================= */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .grid.equal {
+            grid-template-columns: 1fr 1fr;
+            align-items: stretch;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5e9f0;
+            border-radius: 9px;
+            padding: 14px;
+            min-width: 0;
+            box-sizing: border-box;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .panel h3 {
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .panel p {
+            font-size: 8px;
+            color: #8792a3;
+            margin-bottom: 9px;
+        }
+
+        /* ================= CHART ================= */
+
+        .chart {
+            height: 150px;
+            position: relative;
+        }
+
+        /* ================= AI ASSISTANT ================= */
+
+        .ai-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ai-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .online {
+            font-size: 8px;
+            color: #1f9d68;
+            background: #eaf8f1;
+            padding: 4px 7px;
+            border-radius: 10px;
+        }
+
+        .ai-row {
+            display: flex;
+            gap: 7px;
+            font-size: 9px;
+            line-height: 1.45;
+            margin: 8px 0;
+        }
+
+        .ai-icon {
+            width: 22px;
+            height: 22px;
+            flex: none;
+            border-radius: 50%;
+            background: #e8efff;
+            color: #2563eb;
+            display: grid;
+            place-items: center;
+        }
+
+        .ai-user {
+            background: #f3f6fb;
+            padding: 7px;
+            border-radius: 7px;
+            font-size: 9px;
+            margin: 7px 0;
+        }
+
+        .ai-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .ai-actions a {
+            font-size: 8px;
+            text-decoration: none;
+            border: 1px solid #dfe5ef;
+            color: #315a9d;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        .ai-open {
+            display: block;
+            text-align: center;
+            margin-top: 8px;
+            padding: 7px;
+            background: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 9px;
+        }
+
+        /* ================= FITNESS ================= */
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 9px;
+        }
+
+        .mini {
+            background: #f8fafc;
+            border-radius: 7px;
+            padding: 10px;
+            min-width: 0;
+        }
+
+        .mini .icon {
+            font-size: 16px;
+        }
+
+        .mini b {
+            display: block;
+            font-size: 11px;
+            margin: 5px 0 2px;
+        }
+
+        .mini span {
+            font-size: 8px;
+            color: #8792a3;
+        }
+
+        /* ================= SIMULATION ================= */
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+            margin-top: 10px;
+        }
+
+        .sim {
+            padding: 10px;
+            border-radius: 7px;
+            text-align: center;
+            background: #f8fafc;
+            min-width: 0;
+        }
+
+        .sim small {
+            font-size: 8px;
+            color: #8792a3;
+        }
+
+        .sim b {
+            display: block;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .sim.current {
+            background: #eef4ff;
+        }
+
+        .sim.expected {
+            background: #eefbf5;
+        }
+
+        .sim.risk {
+            background: #fff3f3;
+        }
+
+        /* ================= RECOMMENDATIONS ================= */
+
+        .rec {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            margin-top: 8px;
+            border-radius: 7px;
+            background: #f8fafc;
+            border-bottom: 1px solid #edf0f5;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+        }
+
+        .rec:last-child {
+            border-bottom: 0;
+        }
+
+        .rec-icon {
+            font-size: 15px;
+            flex: none;
+        }
+
+        .rec > div:last-child {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .rec b {
+            font-size: 9px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .rec span {
+            display: block;
+            font-size: 8px;
+            color: #8792a3;
+            line-height: 1.4;
+            overflow-wrap: break-word;
+        }
+
+        .view {
+            float: right;
+            text-decoration: none;
+            color: #2563eb;
+            font-size: 8px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width:1000px) {
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .grid,
+            .grid.equal {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width:650px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 18px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .mini-grid,
+            .sim-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            ◈ Persona<span>Flow</span>
+        </div>
+
+        <div class="nav-title">
+            Workspace
+        </div>
+
+        <div class="nav">
+
+            <a href="/dashboard" class="active">
+                ⌂ Dashboard
+            </a>
+
+            <a href="/finance">
+                ▣ Financial Analysis
+            </a>
+
+            <a href="/study">
+                ▤ Study & Productivity
+            </a>
+
+            <a href="/habit">
+                ♡ Habits & Lifestyle
+            </a>
+
+            <a href="/habit">
+                🏃 Fitness & Health
+            </a>
+
+            <a href="/simulation">
+                ◎ Goal Tracking
+            </a>
+
+            <a href="/simulation">
+                ⌁ Future Simulation
+            </a>
+
+            <a href="{{ url_for('chatbot') }}">
+                ◉ AI Assistant
+            </a>
+
+            <a href="/history">
+                ▧ Reports
+            </a>
+
+            <a href="/profile">
+                ⚙ Settings
+            </a>
+
+        </div>
+
+        <div class="logout">
+
+            <a href="/logout">
+                ↪ Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="top">
+
+            <div>
+
+                <h1>
+                    Good morning, {{ session["user_name"] }} 👋
+                </h1>
+
+                <p>
+                    Make better decisions for a better tomorrow.
+                </p>
+
+            </div>
+
+            <div class="avatar">
+                {{ session["user_name"][0] | upper }}
+            </div>
+
+        </div>
+
+
+        <!-- ================= SUMMARY CARDS ================= -->
+
+        <div class="cards">
+
+            <!-- TOTAL INCOME -->
+
+            <div class="card">
+
+                <small>
+                    💰 TOTAL INCOME
+                </small>
+
+                <h2 class="green">
+                    ₹{{ "%.0f"|format(total_income or 0) }}
+                </h2>
+
+                <span class="trend">
+                    ↑ Your recorded income
+                </span>
+
+            </div>
+
+
+            <!-- TOTAL EXPENSE -->
+
+            <div class="card">
+
+                <small>
+                    💸 TOTAL EXPENSES
+                </small>
+
+                <h2 class="blue">
+                    ₹{{ "%.0f"|format(total_expense or 0) }}
+                </h2>
+
+                <span class="trend">
+                    ↑ Your recorded expenses
+                </span>
+
+            </div>
+
+
+            <!-- TOTAL SAVINGS -->
+
+            <div class="card">
+
+                <small>
+                    💎 TOTAL SAVINGS
+                </small>
+
+                <h2 class="purple">
+                    ₹{{ "%.0f"|format(total_savings or 0) }}
+                </h2>
+
+                <span class="trend">
+                    ↑ Current savings
+                </span>
+
+            </div>
+
+
+            <!-- STUDY HOURS -->
+
+            <div class="card">
+
+                <small>
+                    📚 STUDY HOURS
+                </small>
+
+                <h2 class="orange">
+                    {{ "%.1f"|format(study_hours or 0) }} hrs
+                </h2>
+
+                <span class="trend">
+                    ↑ Total study time
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= FINANCE + AI ================= -->
+
+        <div class="grid">
+
+
+            <!-- FINANCIAL OVERVIEW -->
+
+            <div class="panel">
+
+                <h3>
+                    📊 Financial Overview
+                </h3>
+
+                <p>
+                    Overview of your recorded financial activity.
+                </p>
+
+                <div class="chart">
+                    <canvas id="financeChart"></canvas>
+                </div>
+
+            </div>
+
+
+            <!-- AI ASSISTANT -->
+
+            <div class="panel">
+
+                <div class="ai-head">
+
+                    <div class="ai-title">
+                        🤖 AI Assistant
+                    </div>
+
+                    <div class="online">
+                        ● Online
+                    </div>
+
+                </div>
+
+
+                <div class="ai-row">
+
+                    <div class="ai-icon">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        Hi {{ session["user_name"] }}!<br>
+
+                        I'm your PersonaFlow AI assistant.
+
+                        How can I help you today?
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-user">
+
+                    Ask me about your finances, study,
+                    habits, predictions or future decisions.
+
+                </div>
+
+
+                <div class="ai-actions">
+
+                    <a href="{{ url_for('chatbot') }}">
+                        Financial summary
+                    </a>
+
+                    <a href="{{ url_for('chatbot') }}">
+                        Study plan
+                    </a>
+
+                    <a href="{{ url_for('chatbot') }}">
+                        Improve habits
+                    </a>
+
+                </div>
+
+
+                <a class="ai-open" href="{{ url_for('chatbot') }}">
+                    Open AI Assistant →
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= STUDY + FITNESS ================= -->
+
+        <div class="grid equal">
+
+
+            <!-- STUDY -->
+
+            <div class="panel">
+
+                <h3>
+                    📚 Study & Productivity
+                </h3>
+
+                <p>
+                    Your study records and productivity activity.
+                </p>
+
+                <div class="chart">
+                    <canvas id="studyChart"></canvas>
+                </div>
+
+            </div>
+
+
+            <!-- FITNESS -->
+
+            <div class="panel">
+
+                <h3>
+                    🏃 Fitness & Health
+                </h3>
+
+                <p>
+                    Overview of your habit and lifestyle tracking.
+                </p>
+
+
+                <div class="mini-grid">
+
+
+                    <!-- Habit Records -->
+
+                    <div class="mini">
+
+                        <div class="icon">
+                            🎯
+                        </div>
+
+                        <b>
+                            {{ habit_count }}
+                        </b>
+
+                        <span>
+                            Habit records
+                        </span>
+
+                    </div>
+
+
+                    <!-- Completed Habits -->
+
+                    <div class="mini">
+
+                        <div class="icon">
+                            ✅
+                        </div>
+
+                        <b>
+                            {{ completed_habits }}
+                        </b>
+
+                        <span>
+                            Completed habits
+                        </span>
+
+                    </div>
+
+
+                    <!-- Habit Duration -->
+
+                    <div class="mini">
+
+                        <div class="icon">
+                            ⏱️
+                        </div>
+
+                        <b>
+                            {{ "%.0f"|format(habit_minutes or 0) }}
+                        </b>
+
+                        <span>
+                            Total minutes
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= GOALS + SIMULATION ================= -->
+
+        <div class="grid equal">
+
+
+            <!-- GOALS -->
+
+            <div class="panel">
+
+                <h3>
+
+                    🎯 Goal Progress
+
+                    <a class="view" href="/profile">
+                        View All
+                    </a>
+
+                </h3>
+
+
+                <p>
+                    Your personal goals and current tracking areas.
+                </p>
+
+
+                <div class="rec">
+
+                    <div class="rec-icon">
+                        💰
+                    </div>
+
+                    <div>
+
+                        <b>
+                            Financial Planning
+                        </b>
+
+                        <span>
+                            Income: ₹{{ "%.0f"|format(total_income or 0) }}
+                            |
+                            Savings: ₹{{ "%.0f"|format(total_savings or 0) }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="rec">
+
+                    <div class="rec-icon">
+                        📚
+                    </div>
+
+                    <div>
+
+                        <b>
+                            Study Consistency
+                        </b>
+
+                        <span>
+                            {{ "%.1f"|format(study_hours or 0) }}
+                            total study hours recorded.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="rec">
+
+                    <div class="rec-icon">
+                        🎯
+                    </div>
+
+                    <div>
+
+                        <b>
+                            Habit Building
+                        </b>
+
+                        <span>
+                            {{ completed_habits }}
+                            completed habits out of
+                            {{ habit_count }}
+                            records.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FUTURE SIMULATION -->
+
+            <div class="panel">
+
+                <h3>
+
+                    🔮 Future Simulation
+
+                    <a class="view" href="/simulation">
+                        View All
+                    </a>
+
+                </h3>
+
+
+                <p>
+                    Explore what-if decisions using your simulation engine.
+                </p>
+
+
+                <div class="sim-grid">
+
+
+                    <div class="sim current">
+
+                        <small>
+                            Current Savings
+                        </small>
+
+                        <b>
+                            ₹{{ "%.0f"|format(current_savings or 0) }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="sim expected">
+
+                        <small>
+                            Expected Savings
+                        </small>
+
+                        <b>
+                            ₹{{ "%.0f"|format(expected_savings or 0) }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="sim risk">
+
+                        <small>
+                            Risk Scenario
+                        </small>
+
+                        <b>
+                            ₹{{ "%.0f"|format(risk_savings or 0) }}
+                        </b>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+<!-- ================= RECOMMENDATIONS ================= -->
+
+<div class="panel">
+
+    <h3>
+        💡 Personalized Recommendations
+    </h3>
+
+    <p>
+        Recommendations based on your current activity and progress.
+    </p>
+
+    <div class="grid equal" style="margin:0">
+
+        <!-- FINANCE RECOMMENDATION -->
+
+        <div class="rec">
+
+            <div class="rec-icon">
+                💰
+            </div>
+
+            <div>
+
+                <b>
+                    Financial Planning
+                </b>
+
+                <span>
+                    {% if total_expense > total_income * 0.7 %}
+                        Your expenses are relatively high.
+                        Consider reducing unnecessary spending.
+                    {% elif total_savings > 0 %}
+                        Your savings are positive.
+                        Continue maintaining a consistent saving habit.
+                    {% else %}
+                        Start tracking your expenses and savings
+                        to improve your financial planning.
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDY RECOMMENDATION -->
+
+        <div class="rec">
+
+            <div class="rec-icon">
+                📚
+            </div>
+
+            <div>
+
+                <b>
+                    Study Consistency
+                </b>
+
+                <span>
+                    {% if study_hours >= 20 %}
+                        Good study activity.
+                        Continue maintaining your consistency.
+                    {% elif study_hours > 0 %}
+                        Try to gradually increase your study hours
+                        for better consistency.
+                    {% else %}
+                        Start recording your study sessions
+                        to receive personalized study insights.
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- HABIT RECOMMENDATION -->
+
+        <div class="rec">
+
+            <div class="rec-icon">
+                🎯
+            </div>
+
+            <div>
+
+                <b>
+                    Habit Building
+                </b>
+
+                <span>
+                    {% if habit_count > 0 and completed_habits >= habit_count * 0.7 %}
+                        Great habit consistency.
+                        Keep maintaining your routine.
+                    {% elif habit_count > 0 %}
+                        Try to complete more of your recorded habits
+                        to improve your consistency.
+                    {% else %}
+                        Start recording your daily habits
+                        to track your lifestyle progress.
+                    {% endif %}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI RECOMMENDATION -->
+
+        <div class="rec">
+
+            <div class="rec-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <b>
+                    AI Assistant
+                </b>
+
+                <span>
+                    Ask PersonaFlow AI about your finances,
+                    study plans, habits or future decisions.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= CHARTS ================= -->
+
+<script>
+
+    /* ================= DATA FROM FLASK ================= */
+
+    const financeLabels = {{ finance_labels | tojson }};
+
+    const financeValues = {{ finance_values | tojson }};
+
+
+    const studyLabels = {{ study_labels | tojson }};
+
+    const studyValues = {{ study_values | tojson }};
+
+
+
+    /* ================= FINANCIAL CHART ================= */
+
+    new Chart(
+        document.getElementById("financeChart"),
+        {
+            type: "bar",
+
+            data: {
+
+                labels: financeLabels,
+
+                datasets: [{
+
+                    label: "Amount (₹)",
+
+                    data: financeValues,
+
+                    borderRadius: 6
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        }
+
+                    },
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            font: {
+                                size: 9
+                            },
+
+                            callback: function(value) {
+
+                                return "₹" + value;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+
+    /* ================= STUDY CHART ================= */
+
+    new Chart(
+        document.getElementById("studyChart"),
+        {
+            type: "line",
+
+            data: {
+
+                labels: studyLabels,
+
+                datasets: [{
+
+                    label: "Study Hours",
+
+                    data: studyValues,
+
+                    tension: 0.35,
+
+                    fill: false,
+
+                    borderWidth: 3,
+
+                    pointRadius: 4
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: true
+                    }
+
+                },
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+
+                    },
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        title: {
+
+                            display: true,
+
+                            text: "Hours"
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

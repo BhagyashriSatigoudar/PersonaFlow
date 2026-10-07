@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | PersonaFlow</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 240px;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            height: 100vh;
+        }
+
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            padding: 10px;
+            margin-bottom: 35px;
+        }
+
+
+        .logo span {
+            color: #4f8cff;
+        }
+
+
+        .nav-title {
+            font-size: 10px;
+            color: #6f7b8e;
+            margin: 20px 10px 8px;
+            text-transform: uppercase;
+        }
+
+
+        .nav a {
+            display: block;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 7px;
+            color: #9da8b8;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+
+        .nav a:hover,
+        .nav a.active {
+            background: #202b3d;
+            color: white;
+        }
+
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 15px;
+            right: 15px;
+        }
+
+
+        .logout a {
+            display: block;
+            color: #ff7b85;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 35px;
+        }
+
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 7px;
+        }
+
+
+        .header p {
+            color: #8792a3;
+            font-size: 13px;
+        }
+
+
+        /* ================= FLASH MESSAGE ================= */
+
+        .flash {
+            padding: 12px 15px;
+            background: #eaf8f1;
+            color: #21845b;
+            border: 1px solid #ccefe0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+
+        /* ================= PROFILE LAYOUT ================= */
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+
+        .card {
+            background: white;
+            border: 1px solid #e4e9f0;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(20,30,50,.04);
+        }
+
+
+        /* ================= PROFILE SUMMARY ================= */
+
+        .profile-summary {
+            text-align: center;
+        }
+
+
+        .avatar {
+            width: 95px;
+            height: 95px;
+            margin: 5px auto 18px;
+            border-radius: 50%;
+            background: #e8efff;
+            color: #2563eb;
+            display: grid;
+            place-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            border: 5px solid #f5f8ff;
+        }
+
+
+        .profile-summary h2 {
+            font-size: 19px;
+            margin-bottom: 7px;
+        }
+
+
+        .profile-summary > p {
+            color: #8792a3;
+            font-size: 12px;
+        }
+
+
+        .status {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #eaf8f1;
+            color: #21845b;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+
+        /* ================= PROFILE DETAILS ================= */
+
+        .profile-details {
+            margin-top: 25px;
+            text-align: left;
+            border-top: 1px solid #edf0f4;
+            padding-top: 15px;
+        }
+
+
+        .detail {
+            padding: 11px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+
+        .detail:last-child {
+            border-bottom: none;
+        }
+
+
+        .detail span {
+            display: block;
+            font-size: 9px;
+            color: #8a95a5;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+
+        .detail b {
+            font-size: 12px;
+            color: #344054;
+            word-break: break-word;
+        }
+
+
+        /* ================= PROFILE NOTE ================= */
+
+        .profile-note {
+            margin-top: 20px;
+            padding: 14px;
+            background: #f7f9fc;
+            border-radius: 8px;
+            text-align: left;
+            border: 1px solid #edf0f4;
+        }
+
+
+        .profile-note b {
+            font-size: 11px;
+        }
+
+
+        .profile-note p {
+            margin-top: 7px;
+            font-size: 10px;
+            line-height: 1.6;
+            color: #8792a3;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-card h2 {
+            font-size: 19px;
+            margin-bottom: 5px;
+        }
+
+
+        .form-card > p {
+            color: #8792a3;
+            font-size: 12px;
+            margin-bottom: 25px;
+        }
+
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #465163;
+            margin-bottom: 7px;
+        }
+
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dce2ea;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            background: white;
+        }
+
+
+        input:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb15;
+        }
+
+
+        input:disabled {
+            background: #f7f9fc;
+            color: #7d8797;
+            cursor: not-allowed;
+        }
+
+
+        textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+
+        /* ================= SAVE BUTTON ================= */
+
+        .save {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+
+        .save:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* ================= BACK BUTTON ================= */
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+
+        /* ================= PROFILE PURPOSE ================= */
+
+        .purpose {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #f7f9fc;
+            border: 1px solid #e7ebf1;
+        }
+
+
+        .purpose h3 {
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+
+        .purpose p {
+            color: #8792a3;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 900px) {
+
+            .sidebar {
+                width: 190px;
+            }
+
+
+            .main {
+                margin-left: 190px;
+                width: calc(100% - 190px);
+            }
+
+
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media(max-width: 600px) {
+
+            .sidebar {
+                display: none;
+            }
+
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            ◈ Persona<span>Flow</span>
+        </div>
+
+
+        <div class="nav-title">
+            Workspace
+        </div>
+
+
+        <div class="nav">
+
+            <a href="/dashboard">
+                ◉ Dashboard
+            </a>
+
+
+            <a href="/profile" class="active">
+                ◎ My Profile
+            </a>
+
+
+            <a href="/finance">
+                ₹ Finance
+            </a>
+
+
+            <a href="/study">
+                ▤ Study
+            </a>
+
+
+            <a href="/habit">
+                ◐ Habits
+            </a>
+
+
+            <a href="/history">
+                ◷ Activity History
+            </a>
+
+        </div>
+
+
+        <div class="nav-title">
+            Account
+        </div>
+
+
+        <div class="logout">
+
+            <a href="/logout">
+                ↪ Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <h1>
+                My Profile
+            </h1>
+
+
+            <p>
+                Manage your personal information and goals.
+            </p>
+
+        </div>
+
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% for message in messages %}
+
+                <div class="flash">
+
+                    ✓ {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+
+        <!-- ================= PROFILE LAYOUT ================= -->
+
+        <div class="profile-layout">
+
+
+            <!-- ================= PROFILE SUMMARY ================= -->
+
+            <div class="card profile-summary">
+
+
+                <div class="avatar">
+
+                    {{ user[1][0] | upper }}
+
+                </div>
+
+
+                <h2>
+
+                    {{ user[1] }}
+
+                </h2>
+
+
+                <p>
+
+                    {{ user[4] or "Profile Member" }}
+
+                </p>
+
+
+                <span class="status">
+
+                    ● Active Profile
+
+                </span>
+
+
+
+                <!-- PROFILE DETAILS -->
+
+                <div class="profile-details">
+
+
+                    <div class="detail">
+
+                        <span>
+                            EMAIL
+                        </span>
+
+                        <b>
+                            {{ user[2] }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            AGE
+                        </span>
+
+                        <b>
+                            {{ user[3] or "Not added" }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            OCCUPATION
+                        </span>
+
+                        <b>
+                            {{ user[4] or "Not added" }}
+                        </b>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            GOALS
+                        </span>
+
+                        <b>
+                            {% if user[5] %}
+                                Added
+                            {% else %}
+                                Not added
+                            {% endif %}
+                        </b>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROFILE PURPOSE -->
+
+                <div class="profile-note">
+
+                    <b>
+                        Profile Purpose
+                    </b>
+
+
+                    <p>
+                        Your profile information helps PersonaFlow
+                        understand your personal context and build
+                        a better user profile.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= PROFILE FORM ================= -->
+
+            <div class="card form-card">
+
+
+                <h2>
+                    Personal Information
+                </h2>
+
+
+                <p>
+                    Keep your profile information accurate for better personalization.
+                </p>
+
+
+
+                <form method="POST" action="/profile">
+
+
+                    <!-- NAME + EMAIL -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Full Name
+                            </label>
+
+
+                            <input
+                                type="text"
+                                name="full_name"
+                                value="{{ user[1] }}"
+                                placeholder="Enter your full name"
+                                required>
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Email Address
+                            </label>
+
+
+                            <input
+                                type="email"
+                                value="{{ user[2] }}"
+                                disabled>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- AGE + OCCUPATION -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Age
+                            </label>
+
+
+                            <input
+                                type="number"
+                                name="age"
+                                value="{{ user[3] or '' }}"
+                                min="1"
+                                max="120"
+                                placeholder="Enter your age">
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Occupation
+                            </label>
+
+
+                            <input
+                                type="text"
+                                name="occupation"
+                                value="{{ user[4] or '' }}"
+                                placeholder="Student / Engineer / Professional">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- GOALS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Personal Goals
+                        </label>
+
+
+                        <textarea
+                            name="goals"
+                            placeholder="Example: Improve financial discipline, maintain consistent study habits, and develop healthy routines.">{{ user[5] or '' }}</textarea>
+
+                    </div>
+
+
+
+                    <!-- PURPOSE -->
+
+                    <div class="purpose">
+
+                        <h3>
+                            🎯 Why we collect this information
+                        </h3>
+
+
+                        <p>
+                            Your profile data forms the foundation of your
+                            user profile. Combined with financial, study,
+                            and habit information, it helps the system
+                            understand your activities and preferences.
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- SAVE -->
+
+                    <button
+                        class="save"
+                        type="submit">
+
+                        Save Profile Changes
+
+                    </button>
+
+
+                </form>
+
+
+
+                <a
+                    class="back"
+                    href="/dashboard">
+
+                    ← Back to Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

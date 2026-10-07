@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Finance Dashboard | PersonaFlow</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 240px;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 10px;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #4f8cff;
+        }
+
+        .nav a {
+            display: block;
+            padding: 12px;
+            margin: 6px 0;
+            border-radius: 8px;
+            color: #aab4c3;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #202b3d;
+            color: white;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 15px;
+            right: 15px;
+        }
+
+        .logout a {
+            color: #ff7b85;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 35px;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        .hero {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border-radius: 18px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.18);
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .ai-badge {
+            background: rgba(255,255,255,0.18);
+            padding: 9px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+
+        /* ================= FLASH ================= */
+
+        .flash {
+            background: #eaf8f1;
+            color: #21845b;
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            border: 1px solid #ccefdc;
+        }
+
+
+        /* ================= SUMMARY CARDS ================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e5eaf2;
+            box-shadow: 0 5px 18px rgba(20, 30, 50, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .summary-icon {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .summary-title {
+            font-size: 12px;
+            color: #8792a3;
+            margin-bottom: 7px;
+        }
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+            border: 1px solid #e5eaf2;
+            border-radius: 15px;
+            padding: 23px;
+            box-shadow: 0 5px 18px rgba(20, 30, 50, 0.04);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .card-description {
+            font-size: 12px;
+            color: #8792a3;
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= CHARTS ================= */
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            height: 310px;
+            position: relative;
+        }
+
+
+        /* ================= FORMS ================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            align-items: start;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #465163;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dce2ea;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 85px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        button {
+            width: 100%;
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 13px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            background: #1d4ed8;
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+        }
+
+        .predict-btn:hover {
+            background: #5b21b6;
+        }
+
+
+        /* ================= PREDICTION ================= */
+
+        .prediction-result {
+            margin-top: 18px;
+            padding: 22px;
+            border-radius: 14px;
+            text-align: center;
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #dbeafe;
+        }
+
+        .prediction-result h3 {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .prediction-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .prediction-result p {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+
+        /* ================= FORECAST ================= */
+
+        .forecast-card {
+            margin-bottom: 25px;
+        }
+
+
+        /* ================= TABLE ================= */
+
+        .table-card {
+            margin-top: 25px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 13px;
+            border-bottom: 1px solid #edf0f5;
+            font-size: 12px;
+        }
+
+        th {
+            color: #64748b;
+            background: #f8fafc;
+        }
+
+        .empty {
+            text-align: center;
+            color: #8792a3;
+            padding: 25px;
+            font-size: 13px;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .chart-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            ◈ Persona<span>Flow</span>
+        </div>
+
+
+        <div class="nav">
+
+            <a href="/dashboard">
+                ◉ Dashboard
+            </a>
+
+            <a href="/profile">
+                ◎ My Profile
+            </a>
+
+            <a href="/finance" class="active">
+                ₹ Finance
+            </a>
+
+            <a href="/study">
+                ▤ Study
+            </a>
+
+            <a href="/habit">
+                ◐ Habits
+            </a>
+
+            <a href="/simulation">Simulation</a>
+
+            <a href="/history">
+                ◷ Activity History
+            </a>
+
+        </div>
+
+
+        <div class="logout">
+
+            <a href="/logout">
+                ↪ Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- HERO -->
+
+        <div class="hero">
+
+            <div class="hero-top">
+
+                <div>
+
+                    <h1>
+                        Financial Intelligence Dashboard
+                    </h1>
+
+                    <p>
+                        Track your finances and use AI-powered predictions
+                        to understand your future expenses.
+                    </p>
+
+                </div>
+
+
+                <div class="ai-badge">
+
+                    🤖 AI Powered Forecasting
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    💰
+                </div>
+
+                <div class="summary-title">
+                    Total Income
+                </div>
+
+                <div class="summary-value">
+
+                    ₹ {{ "%.2f"|format(total_income) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    💸
+                </div>
+
+                <div class="summary-title">
+                    Total Expense
+                </div>
+
+                <div class="summary-value">
+
+                    ₹ {{ "%.2f"|format(total_expense) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    💳
+                </div>
+
+                <div class="summary-title">
+                    Total Savings
+                </div>
+
+                <div class="summary-value">
+
+                    ₹ {{ "%.2f"|format(total_savings) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📁
+                </div>
+
+                <div class="summary-title">
+                    Financial Records
+                </div>
+
+                <div class="summary-value">
+
+                    {{ total_records }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CHARTS -->
+
+        <div class="chart-grid">
+
+
+            <!-- FINANCIAL OVERVIEW -->
+
+            <div class="card">
+
+                <h2>
+                    📊 Financial Overview
+                </h2>
+
+                <p class="card-description">
+
+                    Comparison of your income,
+                    expenses and savings.
+
+                </p>
+
+
+                <div class="chart-container">
+
+                    <canvas id="overviewChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <!-- CATEGORY DISTRIBUTION -->
+
+            <div class="card">
+
+                <h2>
+                    🥧 Category Distribution
+                </h2>
+
+                <p class="card-description">
+
+                    Distribution of your financial activities.
+
+                </p>
+
+
+                <div class="chart-container">
+
+                    <canvas id="categoryChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- FORMS -->
+
+        <div class="form-grid">
+
+
+            <!-- ADD FINANCIAL DATA -->
+
+            <div class="card">
+
+                <h2>
+                    💰 Add Financial Activity
+                </h2>
+
+                <p class="card-description">
+
+                    Record your financial activities.
+
+                </p>
+
+
+                <form method="POST" action="/finance">
+
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="save"
+                    >
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Category
+                        </label>
+
+
+                        <select name="category" required>
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Income">
+                                Income
+                            </option>
+
+                            <option value="Expense">
+                                Expense
+                            </option>
+
+                            <option value="Savings">
+                                Savings
+                            </option>
+
+                            <option value="Food">
+                                Food
+                            </option>
+
+                            <option value="Travel">
+                                Travel
+                            </option>
+
+                            <option value="Education">
+                                Education
+                            </option>
+
+                            <option value="Shopping">
+                                Shopping
+                            </option>
+
+                            <option value="Entertainment">
+                                Entertainment
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Amount (₹)
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="amount"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter amount"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Frequency
+                        </label>
+
+
+                        <select name="frequency" required>
+
+                            <option value="">
+                                Select Frequency
+                            </option>
+
+                            <option value="Daily">
+                                Daily
+                            </option>
+
+                            <option value="Weekly">
+                                Weekly
+                            </option>
+
+                            <option value="Monthly">
+                                Monthly
+                            </option>
+
+                            <option value="One Time">
+                                One Time
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Description
+                        </label>
+
+
+                        <textarea
+                            name="description"
+                            placeholder="Enter financial activity details..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <button type="submit">
+
+                        Save Financial Data
+
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+            <!-- AI PREDICTION -->
+
+            <div class="card">
+
+                <h2>
+                    🤖 AI Expense Prediction
+                </h2>
+
+                <p class="card-description">
+
+                    Predict your expected expenses
+                    using machine learning.
+
+                </p>
+
+
+                <form method="POST" action="/finance">
+
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="predict"
+                    >
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Income (₹)
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="income"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter income"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Budget (₹)
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="budget"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter budget"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Number of Transactions
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="transaction_count"
+                            min="1"
+                            placeholder="Example: 10"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Financial Category
+                        </label>
+
+
+                        <select
+                            name="prediction_category"
+                            required
+                        >
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Food">
+                                Food
+                            </option>
+
+                            <option value="Travel">
+                                Travel
+                            </option>
+
+                            <option value="Education">
+                                Education
+                            </option>
+
+                            <option value="Shopping">
+                                Shopping
+                            </option>
+
+                            <option value="Entertainment">
+                                Entertainment
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="predict-btn"
+                    >
+
+                        ✨ Predict Expense
+
+                    </button>
+
+
+                </form>
+
+
+                {% if prediction is not none %}
+
+                    <div class="prediction-result">
+
+                        <h3>
+                            Predicted Expense
+                        </h3>
+
+
+                        <div class="prediction-value">
+
+                            ₹ {{ prediction }}
+
+                        </div>
+
+
+                        <p>
+
+                            Generated using the trained
+                            finance prediction model.
+
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- NEXT 7 DAYS FINANCIAL FORECAST -->
+
+        <div class="card forecast-card">
+
+
+            <h2>
+                🔮 Next 7 Days Financial Forecast
+            </h2>
+
+
+            <p class="card-description">
+
+                Predicted future expenses based on your
+                income, budget, transaction count and
+                selected financial category.
+
+            </p>
+
+
+            {% if forecast_amounts %}
+
+
+                <div class="chart-container">
+
+                    <canvas id="forecastChart"></canvas>
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="empty">
+
+                    Enter your financial details and click
+                    "Predict Expense" to see your 7-day
+                    financial forecast.
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+        <!-- RECENT ACTIVITIES -->
+
+        <div class="card table-card">
+
+
+            <h2>
+                🕒 Recent Financial Activities
+            </h2>
+
+
+            <p class="card-description">
+
+                Your latest financial records.
+
+            </p>
+
+
+            {% if recent_finances %}
+
+
+                <div class="table-wrapper">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Category</th>
+
+                                <th>Amount</th>
+
+                                <th>Frequency</th>
+
+                                <th>Description</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for item in recent_finances %}
+
+
+                                <tr>
+
+                                    <td>
+
+                                        {{ item[0] }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        ₹ {{ item[1] }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ item[2] }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ item[3] or "-" }}
+
+                                    </td>
+
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="empty">
+
+                    No financial records available yet.
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- ================= CHART JAVASCRIPT ================= -->
+
+<script>
+
+
+    /* =====================================
+       DATA FROM FLASK
+    ===================================== */
+
+    const categoryLabels =
+        {{ category_labels | tojson }};
+
+    const categoryAmounts =
+        {{ category_amounts | tojson }};
+
+    const forecastDays =
+        {{ forecast_days | tojson }};
+
+    const forecastAmounts =
+        {{ forecast_amounts | tojson }};
+
+
+
+    /* =====================================
+       FINANCIAL OVERVIEW BAR CHART
+    ===================================== */
+
+    const overviewChart = document
+        .getElementById("overviewChart")
+        .getContext("2d");
+
+
+    new Chart(
+
+        overviewChart,
+
+        {
+
+            type: "bar",
+
+
+            data: {
+
+                labels: [
+
+                    "Income",
+                    "Expense",
+                    "Savings"
+
+                ],
+
+
+                datasets: [
+
+                    {
+
+                        label: "Amount (₹)",
+
+
+                        data: [
+
+                            {{ total_income }},
+
+                            {{ total_expense }},
+
+                            {{ total_savings }}
+
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true
+
+                    }
+
+                },
+
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       CATEGORY DISTRIBUTION CHART
+    ===================================== */
+
+    const categoryChart = document
+        .getElementById("categoryChart")
+        .getContext("2d");
+
+
+    new Chart(
+
+        categoryChart,
+
+        {
+
+            type: "doughnut",
+
+
+            data: {
+
+                labels:
+                    categoryLabels,
+
+
+                datasets: [
+
+                    {
+
+                        data:
+                            categoryAmounts
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       NEXT 7 DAYS FINANCIAL FORECAST
+    ===================================== */
+
+    if (
+
+        forecastDays.length > 0 &&
+
+        forecastAmounts.length > 0
+
+    ) {
+
+
+        new Chart(
+
+            document.getElementById(
+                "forecastChart"
+            ),
+
+            {
+
+                type: "line",
+
+
+                data: {
+
+                    labels:
+                        forecastDays,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Predicted Expense (₹)",
+
+
+                            data:
+                                forecastAmounts,
+
+
+                            fill:
+                                true,
+
+
+                            tension:
+                                0.4
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+
+                    maintainAspectRatio:
+                        false,
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true,
+
+
+                            title: {
+
+                                display:
+                                    true,
+
+
+                                text:
+                                    "Predicted Expense (₹)"
+
+                            }
+
+                        },
+
+
+                        x: {
+
+                            title: {
+
+                                display:
+                                    true,
+
+
+                                text:
+                                    "Today → Next 7 Days"
+
+                            }
+
+                        }
+
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display:
+                                true,
+
+
+                            position:
+                                "top"
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>

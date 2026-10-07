@@ -1,0 +1,3503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        PersonaFlow - Digital Twin Simulation
+    </title>
+    
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+
+        /* =================================
+           HEADER
+        ================================= */
+
+        .header {
+            background: white;
+            padding: 25px 40px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+
+        .header small {
+            color: #4f46e5;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+
+        .header h1 {
+            margin-top: 8px;
+            font-size: 32px;
+        }
+
+
+        .header p {
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+
+        /* =================================
+           NAVIGATION
+        ================================= */
+
+        .nav {
+            background: #eef2f7;
+            padding: 15px 40px;
+            display: flex;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+
+
+        .nav a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+
+        .nav a:hover {
+            color: #4f46e5;
+        }
+
+
+        .nav .active {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: #111827;
+        }
+
+
+        /* =================================
+           MAIN CONTAINER
+        ================================= */
+
+        .container {
+            display: grid;
+
+            grid-template-columns:
+                300px
+                1fr
+                330px;
+
+            gap: 20px;
+
+            padding: 25px;
+        }
+
+
+        /* =================================
+           CARD
+        ================================= */
+
+        .card {
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+
+        /* =================================
+           AI BADGE
+        ================================= */
+
+        .ai-badge {
+            float: right;
+
+            background: #7c3aed;
+
+            color: white;
+
+            padding: 6px 10px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+        }
+
+
+        /* =================================
+           SCENARIOS
+        ================================= */
+
+        .scenario {
+            border: 1px solid #e5e7eb;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 12px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .scenario:hover {
+            border-color: #6366f1;
+            background: #f8f8ff;
+        }
+
+
+        .scenario h3 {
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+
+        .scenario p {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+        .selected {
+            border: 2px solid #6366f1;
+            background: #f5f3ff;
+        }
+
+
+        /* =================================
+           SCENARIO STATUS
+        ================================= */
+
+        .scenario-status {
+            margin-top: 15px;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: #eef2ff;
+
+            color: #3730a3;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =================================
+           TABS
+        ================================= */
+
+        .tabs {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .tab {
+            padding: 9px 18px;
+
+            border-radius: 8px;
+
+            border: 1px solid #ddd;
+
+            background: white;
+
+            cursor: pointer;
+        }
+
+
+        .tab.active {
+            background: #2563eb;
+
+            color: white;
+
+            border-color: #2563eb;
+        }
+
+
+        /* =================================
+           SUMMARY
+        ================================= */
+
+        .summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .summary-box {
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            text-align: center;
+        }
+
+
+        .summary-box span {
+            display: block;
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .summary-box strong {
+            font-size: 21px;
+
+            color: #2563eb;
+        }
+
+
+        /* =================================
+           CHART
+        ================================= */
+
+        .chart {
+            height: 350px;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .chart-title {
+            font-weight: bold;
+
+            margin-bottom: 15px;
+        }
+
+
+        .chart-area {
+            position: relative;
+
+            height: 260px;
+
+            width: 100%;
+        }
+
+
+        #simulationChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #wellbeingChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+
+        /* =================================
+           LEGEND
+        ================================= */
+
+        .legend {
+            display: flex;
+
+            gap: 20px;
+
+            margin-top: 12px;
+
+            font-size: 13px;
+
+            color: #4b5563;
+        }
+
+
+        .legend-item {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+        }
+
+
+        .dot {
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+        }
+
+
+        .blue {
+            background: #2563eb;
+        }
+
+
+        .green {
+            background: #10b981;
+        }
+
+
+        .orange {
+            background: #f59e0b;
+        }
+
+
+        /* =================================
+           RESULTS
+        ================================= */
+
+        .results {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .result-box {
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 18px;
+
+            text-align: center;
+        }
+
+
+        .result-box span {
+            display: block;
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .result-box strong {
+            display: block;
+
+            font-size: 23px;
+
+            color: #2563eb;
+
+            margin-bottom: 5px;
+        }
+
+
+        .result-box small {
+            color: #6b7280;
+        }
+
+
+        /* =================================
+           RECOMMENDATIONS
+        ================================= */
+
+        .recommendation {
+            border-left: 5px solid #10b981;
+
+            background: #f0fdf4;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .recommendation h3 {
+            margin-bottom: 8px;
+
+            font-size: 16px;
+        }
+
+
+        .recommendation p {
+            color: #4b5563;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        .impact {
+            display: inline-block;
+
+            margin-top: 8px;
+
+            padding: 5px 8px;
+
+            border-radius: 5px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        /* =================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 1100px) {
+
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .summary,
+            .results {
+                grid-template-columns: 1fr;
+            }
+
+
+            .nav {
+                flex-wrap: wrap;
+            }
+
+
+            .chart {
+                height: 330px;
+            }
+
+
+            .chart-area {
+                height: 240px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================
+         HEADER
+    ================================= -->
+
+    <div class="header">
+
+        <small>
+            MILESTONE 3 • WEEKS 5–6
+        </small>
+
+
+        <h1>
+            Digital Twin Simulation Engine
+        </h1>
+
+
+        <p>
+            Simulate decisions and compare future outcomes
+        </p>
+
+    </div>
+
+
+
+    <!-- =================================
+         NAVIGATION
+    ================================= -->
+
+    <div class="nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+
+        <a href="/profile">
+            My Profile
+        </a>
+
+
+        <a href="/finance">
+            Finance
+        </a>
+
+
+        <a href="/study">
+            Study
+        </a>
+
+
+        <a href="/habit">
+            Habits
+        </a>
+
+
+        <a href="/simulation"
+           class="active">
+
+            Simulation
+
+        </a>
+
+
+        <a href="/history">
+            Activity History
+        </a>
+
+    </div>
+
+
+
+    <!-- =================================
+         MAIN
+    ================================= -->
+
+    <div class="container">
+
+
+        <!-- =================================
+             LEFT COLUMN
+        ================================= -->
+
+        <div class="card">
+
+
+            <h2>
+
+                Simulate Decision
+
+                <span class="ai-badge">
+                    AI Powered
+                </span>
+
+            </h2>
+
+
+            <!-- =============================
+                 SCENARIO 1
+            ============================== -->
+
+            <div class="scenario selected"
+                 data-scenario="savings">
+
+                <h3>
+                    💰 Increase Savings Rate
+                </h3>
+
+                <p>
+                    Simulate saving 30% instead of
+                    your current savings rate.
+                </p>
+
+            </div>
+
+
+            <!-- =============================
+                 SCENARIO 2
+            ============================== -->
+
+            <div class="scenario"
+                 data-scenario="mba">
+
+                <h3>
+                    🎓 MBA Program
+                </h3>
+
+                <p>
+                    Compare potential career growth
+                    with and without MBA.
+                </p>
+
+            </div>
+
+
+            <!-- =============================
+                 SCENARIO 3
+            ============================== -->
+
+            <div class="scenario"
+                 data-scenario="home">
+
+                <h3>
+                    🏠 Buy vs Rent Home
+                </h3>
+
+                <p>
+                    Compare long-term financial
+                    impact.
+                </p>
+
+            </div>
+
+
+            <!-- =============================
+                 SCENARIO 4
+            ============================== -->
+
+            <div class="scenario"
+                 data-scenario="fitness">
+
+                <h3>
+                    🏃 Fitness Routine
+                </h3>
+
+                <p>
+                    Simulate the effect of improved
+                    exercise habits.
+                </p>
+
+            </div>
+
+            <!-- =============================
+     SCENARIO 5
+============================== -->
+
+<div class="scenario"
+     data-scenario="study">
+
+    <h3>
+        📚 Study Improvement
+    </h3>
+
+    <p>
+        Simulate future study performance
+        using your historical study data.
+    </p>
+
+</div>
+
+
+            <!-- Scenario status -->
+
+            <div class="scenario-status"
+                 id="scenarioStatus">
+
+                <strong>
+                    Selected Scenario:
+                </strong>
+
+                Increase Savings Rate
+
+                <br>
+
+                The simulation compares your
+                current savings with a 25% and
+                30% savings strategy.
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             CENTER COLUMN
+        ================================= -->
+
+        <div class="card">
+
+
+            <h2>
+                Scenario Comparison
+            </h2>
+
+
+            <!-- TABS -->
+
+            <div class="tabs">
+
+                <button class="tab active"
+                        onclick="showFinancial()">
+
+                    Financial
+
+                </button>
+
+
+                <button class="tab"
+                        onclick="showWellbeing()">
+
+                    Well-being
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================
+                 FINANCIAL SECTION
+            ================================= -->
+
+            <div id="financialSection">
+
+
+                <!-- SUMMARY -->
+
+                <div class="summary">
+
+
+                    <div class="summary-box">
+
+                        <span>
+                            Total Income
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.0f}".format(total_income) }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-box">
+
+                        <span>
+                            Total Expense
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.0f}".format(total_expense) }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-box">
+
+                        <span>
+                            Savings Rate
+                        </span>
+
+                        <strong id="savingsRateDisplay">
+                            {{ current_savings_rate }}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================
+                     CHART
+                ================================= -->
+
+                <div class="chart">
+
+
+                    <div class="chart-title"
+                         id="chartTitle">
+
+                        Savings Projection
+                        (5 Years)
+
+                    </div>
+
+
+                    <div class="chart-area">
+
+                        <canvas id="simulationChart">
+                        </canvas>
+
+                    </div>
+
+
+                    <!-- Legend -->
+
+                    <div class="legend">
+
+
+                        <div class="legend-item">
+
+                            <span class="dot blue">
+                            </span>
+
+                            Current Path
+
+                        </div>
+
+
+                        <div class="legend-item">
+
+                            <span class="dot green">
+                            </span>
+
+                            Save 25%
+
+                        </div>
+
+
+                        <div class="legend-item">
+
+                            <span class="dot orange">
+                            </span>
+
+                            Save 30%
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================
+                     RESULTS
+                ================================= -->
+
+                <div class="results">
+
+
+                    <!-- CURRENT -->
+
+                    <div class="result-box">
+
+                        <span>
+                            Current Path
+                        </span>
+
+                        <strong id="currentResult">
+
+                            ₹{{ "{:,.0f}".format(current_path) }}
+
+                        </strong>
+
+                        <small>
+                            in 5 years
+                        </small>
+
+                    </div>
+
+
+                    <!-- SAVE 30 -->
+
+                    <div class="result-box">
+
+                        <span>
+                            Save 30%
+                        </span>
+
+                        <strong id="save30Result">
+
+                            ₹{{ "{:,.0f}".format(save_30) }}
+
+                        </strong>
+
+                        <small>
+                            in 5 years
+                        </small>
+
+                    </div>
+
+
+                    <!-- SAVE 25 -->
+
+                    <div class="result-box">
+
+                        <span>
+                            Save 25%
+                        </span>
+
+                        <strong id="save25Result">
+
+                            ₹{{ "{:,.0f}".format(save_25) }}
+
+                        </strong>
+
+                        <small>
+                            in 5 years
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 WELL-BEING
+            ================================= -->
+<!-- =================================
+     WELL-BEING SECTION
+================================= -->
+
+<div id="wellbeingSection"
+     style="display:none;">
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-box">
+
+            <span>
+                Productivity
+            </span>
+
+            <strong id="wellbeingProductivity">
+                Improving
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Exercise
+            </span>
+
+            <strong id="wellbeingExercise">
+                Healthy
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Future Trend
+            </span>
+
+            <strong id="wellbeingTrend">
+                Positive
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- WELL-BEING CHART -->
+
+    <div class="chart">
+
+        <div class="chart-title"
+             id="wellbeingChartTitle">
+
+            Well-being Projection
+            (5 Years)
+
+        </div>
+
+
+        <div class="chart-area">
+
+            <canvas id="wellbeingChart">
+            </canvas>
+
+        </div>
+
+
+        <!-- LEGEND -->
+
+        <div class="legend">
+
+            <div class="legend-item">
+
+                <span class="dot blue">
+                </span>
+
+                Current / Expected
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="dot green">
+                </span>
+
+                Improved Scenario
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- WELL-BEING RESULTS -->
+
+    <div class="results">
+
+        <div class="result-box">
+
+            <span>
+                Current Score
+            </span>
+
+            <strong id="currentWellbeingResult">
+                60
+            </strong>
+
+            <small>
+                Current / Expected
+            </small>
+
+        </div>
+
+
+        <div class="result-box">
+
+            <span>
+                Improved Score
+            </span>
+
+            <strong id="improvedWellbeingResult">
+                75
+            </strong>
+
+            <small>
+                Improved Scenario
+            </small>
+
+        </div>
+
+
+        <div class="result-box">
+
+            <span>
+                Improvement
+            </span>
+
+            <strong id="wellbeingImprovementResult">
+                +15
+            </strong>
+
+            <small>
+                Points
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+        <!-- =================================
+             RIGHT COLUMN
+        ================================= -->
+
+        <div class="card">
+
+
+            <h2>
+
+                AI Recommendations
+
+                <span class="ai-badge">
+                    AI Powered
+                </span>
+
+            </h2>
+
+
+            <!-- Main Recommendation -->
+
+            <div class="recommendation">
+
+                <h3 id="recommendationTitle">
+
+                    Optimal Savings Rate
+
+                </h3>
+
+
+                <p id="recommendationText">
+
+                    {{ recommendation }}
+
+                </p>
+
+
+                <span class="impact"
+                      id="recommendationImpact">
+
+                    {{ recommendation_level }}
+                    Impact
+
+                </span>
+
+            </div>
+
+
+
+            <!-- Emergency Fund -->
+
+            <div class="recommendation">
+
+    <h3 id="recommendation2Title">
+        Savings Improvement
+    </h3>
+
+    <p id="recommendation2Text">
+        Your historical financial data is used to compare your current savings pattern with improved savings scenarios.
+    </p>
+
+    <span class="impact"
+          id="recommendation2Impact">
+        Financial Impact
+    </span>
+
+</div>
+
+
+
+            <!-- Automated Savings -->
+
+            <div class="recommendation">
+
+    <h3 id="recommendation3Title">
+        Savings Consistency
+    </h3>
+
+    <p id="recommendation3Text">
+        Maintaining consistent savings can improve the projected five-year financial outcome.
+    </p>
+
+    <span class="impact"
+          id="recommendation3Impact">
+        Long-Term Benefit
+    </span>
+
+</div>
+
+
+
+    <!-- =================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script>
+
+/* =====================================================
+   FLASK DATA
+===================================================== */
+
+const currentData =
+    {{ current_graph | tojson }};
+
+const save25Data =
+    {{ save25_graph | tojson }};
+
+const save30Data =
+    {{ save30_graph | tojson }};
+
+const currentPathValue =
+    {{ current_path | tojson }};
+
+const save25Value =
+    {{ save_25 | tojson }};
+
+const save30Value =
+    {{ save_30 | tojson }};
+
+const currentSavingsRate =
+    {{ current_savings_rate | tojson }};
+
+
+/* =====================================================
+   FINANCIAL CHART
+===================================================== */
+
+const ctx =
+    document
+        .getElementById("simulationChart")
+        .getContext("2d");
+
+
+const simulationChart =
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Year 1",
+                "Year 2",
+                "Year 3",
+                "Year 4",
+                "Year 5"
+            ],
+
+            datasets: [
+
+                {
+                    label: "Current Path",
+
+                    data: currentData,
+
+                    borderColor: "#2563eb",
+
+                    backgroundColor:
+                        "rgba(37, 99, 235, 0.10)",
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 4
+                },
+
+                {
+                    label: "Save 25%",
+
+                    data: save25Data,
+
+                    borderColor: "#10b981",
+
+                    backgroundColor:
+                        "rgba(16, 185, 129, 0.10)",
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 4
+                },
+
+                {
+                    label: "Save 30%",
+
+                    data: save30Data,
+
+                    borderColor: "#f59e0b",
+
+                    backgroundColor:
+                        "rgba(245, 158, 11, 0.10)",
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 4
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false
+
+            },
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label:
+                            function(context) {
+
+                                return (
+                                    context.dataset.label
+                                    + ": ₹"
+                                    + Number(
+                                        context.parsed.y
+                                    ).toLocaleString(
+                                        "en-IN"
+                                    )
+                                );
+
+                            }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Years"
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+
+                        display: true,
+
+                        text: "Projected Savings (₹)"
+
+                    },
+
+                    ticks: {
+
+                        callback:
+                            function(value) {
+
+                                return "₹" +
+                                    Number(value)
+                                    .toLocaleString(
+                                        "en-IN"
+                                    );
+
+                            }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+/* =====================================================
+   FORMAT CURRENCY
+===================================================== */
+
+function formatCurrency(value) {
+
+    return "₹" +
+        Number(value)
+            .toLocaleString("en-IN");
+
+}
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const scenarios =
+    document.querySelectorAll(".scenario");
+
+
+const scenarioStatus =
+    document.getElementById(
+        "scenarioStatus"
+    );
+
+
+const recommendationTitle =
+    document.getElementById(
+        "recommendationTitle"
+    );
+
+
+const recommendationText =
+    document.getElementById(
+        "recommendationText"
+    );
+
+
+const recommendationImpact =
+    document.getElementById(
+        "recommendationImpact"
+    );
+
+
+const chartTitle =
+    document.getElementById(
+        "chartTitle"
+    );
+
+
+/* =====================================================
+   WELL-BEING VARIABLES
+===================================================== */
+
+let wellbeingChart = null;
+
+let selectedWellbeingScenario =
+    "Savings";
+
+
+/* =====================================================
+   SCENARIO CLICK
+===================================================== */
+
+scenarios.forEach(
+    function(scenario) {
+
+        scenario.addEventListener(
+            "click",
+            function() {
+
+                /* Remove old selection */
+
+                scenarios.forEach(
+                    function(item) {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    }
+                );
+
+
+                /* Select clicked scenario */
+
+                this.classList.add(
+                    "selected"
+                );
+
+
+                const scenarioType =
+                    this.dataset.scenario;
+
+
+                /* Savings */
+
+                if (
+                    scenarioType === "savings"
+                ) {
+
+                    activateSavingsScenario();
+
+                }
+
+
+                /* MBA */
+
+                else if (
+                    scenarioType === "mba"
+                ) {
+
+                    activateMBA();
+
+                }
+
+
+                /* Home */
+
+                else if (
+                    scenarioType === "home"
+                ) {
+
+                    activateHome();
+
+                }
+
+
+                /* Fitness */
+
+                else if (
+                    scenarioType === "fitness"
+                ) {
+
+                    activateFitness();
+
+                }
+
+                else if (
+                    scenarioType === "study"
+                    ) {
+                        activateStudy();
+                    }
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   SAVINGS SCENARIO
+===================================================== */
+
+function activateSavingsScenario() {
+
+    chartTitle.innerText =
+        "Savings Projection (5 Years)";
+
+
+    scenarioStatus.innerHTML = `
+
+        <strong>
+            Selected Scenario:
+        </strong>
+
+        Increase Savings Rate
+
+        <br><br>
+
+        Your current savings are compared
+        with 25% and 30% savings strategies.
+
+    `;
+
+
+    recommendationTitle.innerText =
+        "Optimal Savings Rate";
+
+
+    recommendationText.innerText =
+        "Increasing your savings rate toward 30% can improve your projected long-term savings.";
+
+
+    recommendationImpact.innerText =
+        "High Impact";
+
+
+    /* Restore financial chart */
+
+    simulationChart.data.datasets = [
+
+        {
+            label: "Current Path",
+
+            data: currentData,
+
+            borderColor: "#2563eb",
+
+            borderWidth: 3,
+
+            tension: 0.3,
+
+            fill: false,
+
+            pointRadius: 4
+        },
+
+        {
+            label: "Save 25%",
+
+            data: save25Data,
+
+            borderColor: "#10b981",
+
+            borderWidth: 3,
+
+            tension: 0.3,
+
+            fill: false,
+
+            pointRadius: 4
+        },
+
+        {
+            label: "Save 30%",
+
+            data: save30Data,
+
+            borderColor: "#f59e0b",
+
+            borderWidth: 3,
+
+            tension: 0.3,
+
+            fill: false,
+
+            pointRadius: 4
+        }
+
+    ];
+
+
+    simulationChart.options.scales.y.title.text =
+        "Projected Savings (₹)";
+
+
+    simulationChart.update();
+
+
+    /* Restore values */
+
+    document.getElementById(
+        "currentResult"
+    ).innerText =
+        formatCurrency(
+            currentPathValue
+        );
+
+
+    document.getElementById(
+        "save25Result"
+    ).innerText =
+        formatCurrency(
+            save25Value
+        );
+
+
+    document.getElementById(
+        "save30Result"
+    ).innerText =
+        formatCurrency(
+            save30Value
+        );
+
+
+    document.getElementById(
+        "savingsRateDisplay"
+    ).innerText =
+        currentSavingsRate + "%";
+
+
+    /* Update Well-being */
+
+    /* Update Well-being */
+
+   selectedWellbeingScenario = "Savings";
+
+   updateWellbeingForScenario("Savings");
+
+}
+
+
+/* =====================================================
+   MBA SCENARIO
+===================================================== */
+function updateRecommendations(scenario) {
+
+    const title2 =
+        document.getElementById("recommendation2Title");
+
+    const text2 =
+        document.getElementById("recommendation2Text");
+
+    const impact2 =
+        document.getElementById("recommendation2Impact");
+
+    const title3 =
+        document.getElementById("recommendation3Title");
+
+    const text3 =
+        document.getElementById("recommendation3Text");
+
+    const impact3 =
+        document.getElementById("recommendation3Impact");
+
+
+    if (!title2 || !text2 || !impact2 ||
+        !title3 || !text3 || !impact3) {
+
+        console.error(
+            "Recommendation elements not found"
+        );
+
+        return;
+    }
+
+
+    /* =========================
+       SAVINGS
+    ========================= */
+
+    if (scenario === "Savings") {
+
+        title2.innerText =
+            "Savings Improvement";
+
+        text2.innerText =
+            "Your historical financial data is used to compare your current savings pattern with improved savings scenarios.";
+
+        impact2.innerText =
+            "Financial Impact";
+
+
+        title3.innerText =
+            "Savings Consistency";
+
+        text3.innerText =
+            "Maintaining consistent savings can improve the projected five-year financial outcome.";
+
+        impact3.innerText =
+            "Long-Term Benefit";
+    }
+
+
+    /* =========================
+       MBA
+    ========================= */
+
+    else if (scenario === "MBA") {
+
+        title2.innerText =
+            "MBA Cost Consideration";
+
+        text2.innerText =
+            "The MBA simulation includes the assumed education cost when comparing the projected income scenarios.";
+
+        impact2.innerText =
+            "Cost Factor";
+
+
+        title3.innerText =
+            "Career Income Projection";
+
+        text3.innerText =
+            "Your current income is used as the baseline for the simulated MBA career-income projection.";
+
+        impact3.innerText =
+            "Projection Based";
+    }
+
+
+    /* =========================
+       BUY VS RENT
+    ========================= */
+
+    else if (scenario === "Buy vs Rent") {
+
+        title2.innerText =
+            "Housing Cost";
+
+        text2.innerText =
+            "Your actual income and expenses are used as the financial baseline for the housing simulation.";
+
+        impact2.innerText =
+            "Financial Factor";
+
+
+        title3.innerText =
+            "Housing Risk";
+
+        text3.innerText =
+            "The risk scenario represents a higher housing-cost assumption and shows its simulated five-year impact.";
+
+        impact3.innerText =
+            "Risk Scenario";
+    }
+
+
+    /* =========================
+       FITNESS
+    ========================= */
+
+    else if (scenario === "Fitness") {
+
+        title2.innerText =
+            "Habit Consistency";
+
+        text2.innerText =
+            "Your historical habit records provide the baseline for the productivity simulation.";
+
+        impact2.innerText =
+            "Data Based";
+
+
+        title3.innerText =
+            "Productivity Improvement";
+
+        text3.innerText =
+            "Improving habit consistency is simulated as a potential way to increase the future productivity score.";
+
+        impact3.innerText =
+            "Positive Impact";
+    }
+
+
+    /* =========================
+       STUDY
+    ========================= */
+
+    else if (scenario === "Study") {
+
+        title2.innerText =
+            "Study Consistency";
+
+        text2.innerText =
+            "Your historical study records and average study hours provide the baseline for the simulation.";
+
+        impact2.innerText =
+            "Data Based";
+
+
+        title3.innerText =
+            "Study Improvement";
+
+        text3.innerText =
+            "Increasing study consistency is simulated as a potential improvement in the future study trend.";
+
+        impact3.innerText =
+            "Positive Impact";
+    }
+
+}
+
+
+function activateMBA() {
+
+    /* =================================
+       MBA SIMULATION
+       USING ACTUAL USER INCOME
+    ================================= */
+
+    const monthlyIncome =
+        {{ total_income | tojson }};
+
+    const annualIncome =
+        monthlyIncome * 12;
+
+    const mbaCost = 500000;
+
+    /* Assumptions */
+    const normalGrowth = 0.05;
+    const mbaIncomeIncrease = 0.20;
+    const riskIncomeIncrease = 0.10;
+    const riskGrowth = 0.03;
+
+    let withoutMBA = [];
+    let withMBA = [];
+    let riskMBA = [];
+
+    let totalWithoutMBA = 0;
+    let totalWithMBA = 0;
+    let totalRiskMBA = 0;
+
+
+    /* =================================
+       5 YEAR PROJECTION
+    ================================= */
+
+    for (let year = 1; year <= 5; year++) {
+
+        /* WITHOUT MBA */
+        let normalIncome =
+            annualIncome *
+            Math.pow(
+                1 + normalGrowth,
+                year
+            );
+
+
+        /* WITH MBA */
+        let mbaIncome =
+            annualIncome *
+            (1 + mbaIncomeIncrease) *
+            Math.pow(
+                1 + normalGrowth,
+                year
+            );
+
+        mbaIncome =
+            mbaIncome - mbaCost;
+
+
+        /* RISK MBA */
+        let riskIncome =
+            annualIncome *
+            (1 + riskIncomeIncrease) *
+            Math.pow(
+                1 + riskGrowth,
+                year
+            );
+
+        riskIncome =
+            riskIncome - mbaCost;
+
+
+        withoutMBA.push(
+            Math.round(normalIncome)
+        );
+
+        withMBA.push(
+            Math.round(mbaIncome)
+        );
+
+        riskMBA.push(
+            Math.round(riskIncome)
+        );
+
+
+        totalWithoutMBA +=
+            normalIncome;
+
+        totalWithMBA +=
+            mbaIncome;
+
+        totalRiskMBA +=
+            riskIncome;
+    }
+
+
+    /* =================================
+       UPDATE CHART
+    ================================= */
+
+    simulationChart.data.datasets = [
+
+        {
+            label: "Without MBA",
+            data: withoutMBA,
+            borderColor: "#2563eb",
+            backgroundColor:
+                "rgba(37, 99, 235, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "With MBA",
+            data: withMBA,
+            borderColor: "#16a34a",
+            backgroundColor:
+                "rgba(22, 163, 74, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Risk Scenario",
+            data: riskMBA,
+            borderColor: "#f59e0b",
+            backgroundColor:
+                "rgba(245, 158, 11, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        }
+
+    ];
+
+
+    /* =================================
+       CHART AXIS
+    ================================= */
+
+    simulationChart.options.scales.y.title.text =
+        "Projected Annual Income (₹)";
+
+
+    /* =================================
+       TOOLTIP
+    ================================= */
+
+    simulationChart.options.plugins.tooltip.callbacks.label =
+        function(context) {
+
+            return (
+                context.dataset.label +
+                ": ₹" +
+                Number(
+                    context.parsed.y
+                ).toLocaleString("en-IN")
+            );
+
+        };
+
+
+    simulationChart.update();
+
+
+    /* =================================
+       TITLE
+    ================================= */
+
+    chartTitle.innerText =
+        "MBA Career Income Comparison (5 Years)";
+
+
+    /* =================================
+       SCENARIO STATUS
+    ================================= */
+
+    scenarioStatus.innerHTML = `
+
+        <strong>
+            Selected Scenario:
+        </strong>
+
+        MBA Program
+
+        <br><br>
+
+        Current Annual Income:
+        ₹${Math.round(annualIncome)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        MBA Cost:
+        ₹${mbaCost.toLocaleString("en-IN")}
+
+        <br>
+
+        Expected MBA Income Increase:
+        20%
+
+        <br>
+
+        Risk Income Increase:
+        10%
+
+        <br>
+
+        Projection Period:
+        5 Years
+
+    `;
+
+
+    /* =================================
+       RESULT CARDS
+    ================================= */
+
+    document.getElementById(
+        "currentResult"
+    ).previousElementSibling.innerText =
+        "Without MBA";
+
+
+    document.getElementById(
+        "save30Result"
+    ).previousElementSibling.innerText =
+        "With MBA";
+
+
+    document.getElementById(
+        "save25Result"
+    ).previousElementSibling.innerText =
+        "Risk Scenario";
+
+
+    document.getElementById(
+        "currentResult"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalWithoutMBA
+        ).toLocaleString("en-IN");
+
+
+    document.getElementById(
+        "save30Result"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalWithMBA
+        ).toLocaleString("en-IN");
+
+
+    document.getElementById(
+        "save25Result"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalRiskMBA
+        ).toLocaleString("en-IN");
+
+
+    /* =================================
+       LEGEND
+    ================================= */
+
+    const legendItems =
+        document.querySelectorAll(
+            ".legend-item"
+        );
+
+    if (legendItems.length >= 3) {
+
+        legendItems[0].innerHTML =
+            '<span class="dot blue"></span>' +
+            'Without MBA';
+
+        legendItems[1].innerHTML =
+            '<span class="dot green"></span>' +
+            'With MBA';
+
+        legendItems[2].innerHTML =
+            '<span class="dot orange"></span>' +
+            'Risk Scenario';
+    }
+
+
+    /* =================================
+       AI RECOMMENDATION
+    ================================= */
+    recommendationTitle.innerText =
+        "MBA Scenario Analysis";
+
+    recommendationText.innerText =
+        "The simulation compares your current income path without an MBA with a projected income path with an MBA, while also showing a lower-growth risk scenario.";
+
+    recommendationImpact.innerText =
+        "Simulation Based";
+
+    updateRecommendations("MBA"); 
+    updateWellbeingForScenario("MBA");   
+
+}
+
+
+/* =====================================================
+   BUY VS RENT
+===================================================== */
+
+function activateHome() {
+
+    /* =================================
+       BUY VS RENT SIMULATION
+       USING ACTUAL USER DATA
+    ================================= */
+
+    const monthlyIncome =
+        {{ total_income | tojson }};
+
+    const monthlyExpense =
+        {{ total_expense | tojson }};
+
+
+    /* =================================
+       BASED ON ACTUAL USER DATA
+    ================================= */
+
+    const currentMonthlySaving =
+        Math.max(
+            monthlyIncome - monthlyExpense,
+            0
+        );
+
+
+    /* =================================
+       HOUSING ASSUMPTIONS
+
+       These are What-If assumptions,
+       not guaranteed property values.
+    ================================= */
+
+    const rentRate = 0.20;
+
+    const buyRate = 0.25;
+
+    const riskRate = 0.30;
+
+    const rentIncrease = 0.05;
+
+    const propertyAppreciation = 0.05;
+
+
+    const monthlyRent =
+        monthlyIncome * rentRate;
+
+    const monthlyBuyCost =
+        monthlyIncome * buyRate;
+
+    const monthlyRiskCost =
+        monthlyIncome * riskRate;
+
+
+    /* =================================
+       SIMULATED HOME VALUE
+    ================================= */
+
+    const homePrice =
+        monthlyIncome * 60;
+
+
+    const downPayment =
+        homePrice * 0.20;
+
+
+    const years = 5;
+
+
+    let rentData = [];
+    let buyData = [];
+    let riskData = [];
+
+
+    let totalRent = 0;
+    let totalBuy = 0;
+    let totalRisk = 0;
+
+
+    /* =================================
+       5 YEAR PROJECTION
+    ================================= */
+
+    for (
+        let year = 1;
+        year <= years;
+        year++
+    ) {
+
+        /* -----------------------------
+           RENTING
+        ----------------------------- */
+
+        const yearlyRent =
+            monthlyRent *
+            12 *
+            Math.pow(
+                1 + rentIncrease,
+                year - 1
+            );
+
+        totalRent += yearlyRent;
+
+
+        /* -----------------------------
+           BUYING
+        ----------------------------- */
+
+        const futureHomeValue =
+            homePrice *
+            Math.pow(
+                1 + propertyAppreciation,
+                year
+            );
+
+
+        const buyingCost =
+            downPayment +
+            (homePrice - downPayment) -
+            (futureHomeValue - homePrice);
+
+
+        totalBuy +=
+            Math.max(
+                buyingCost,
+                0
+            );
+
+
+        /* -----------------------------
+           RISK SCENARIO
+        ----------------------------- */
+
+        const riskYearlyCost =
+            monthlyRiskCost *
+            12 *
+            Math.pow(
+                1 + rentIncrease,
+                year - 1
+            );
+
+        totalRisk +=
+            riskYearlyCost;
+
+
+        /* -----------------------------
+           GRAPH VALUES
+        ----------------------------- */
+
+        rentData.push(
+            Math.round(totalRent)
+        );
+
+        buyData.push(
+            Math.round(
+                totalBuy
+            )
+        );
+
+        riskData.push(
+            Math.round(totalRisk)
+        );
+    }
+
+
+    /* =================================
+       UPDATE CHART
+    ================================= */
+
+    simulationChart.data.datasets = [
+
+        {
+            label: "Renting",
+            data: rentData,
+            borderColor: "#2563eb",
+            backgroundColor:
+                "rgba(37, 99, 235, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Buying",
+            data: buyData,
+            borderColor: "#16a34a",
+            backgroundColor:
+                "rgba(22, 163, 74, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Risk Scenario",
+            data: riskData,
+            borderColor: "#f59e0b",
+            backgroundColor:
+                "rgba(245, 158, 11, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        }
+
+    ];
+
+
+    /* =================================
+       AXIS
+    ================================= */
+
+    simulationChart.options.scales.y.title.text =
+        "Projected Housing Cost (₹)";
+
+
+    /* =================================
+       TOOLTIP
+    ================================= */
+
+    simulationChart.options.plugins.tooltip.callbacks.label =
+        function(context) {
+
+            return (
+                context.dataset.label +
+                ": ₹" +
+                Number(
+                    context.parsed.y
+                ).toLocaleString("en-IN")
+            );
+
+        };
+
+
+    simulationChart.update();
+
+
+    /* =================================
+       TITLE
+    ================================= */
+
+    chartTitle.innerText =
+        "Buy vs Rent Cost Comparison (5 Years)";
+
+
+    /* =================================
+       SCENARIO STATUS
+    ================================= */
+
+    scenarioStatus.innerHTML = `
+
+        <strong>
+            Selected Scenario:
+        </strong>
+
+        Buy vs Rent Home
+
+        <br><br>
+
+        Monthly Income:
+        ₹${Math.round(monthlyIncome)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Monthly Expense:
+        ₹${Math.round(monthlyExpense)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Current Monthly Saving:
+        ₹${Math.round(currentMonthlySaving)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Assumed Monthly Rent:
+        ₹${Math.round(monthlyRent)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Estimated Home Price:
+        ₹${Math.round(homePrice)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Down Payment:
+        ₹${Math.round(downPayment)
+            .toLocaleString("en-IN")}
+
+        <br>
+
+        Projection Period:
+        5 Years
+
+    `;
+
+
+    /* =================================
+       RESULT CARDS
+    ================================= */
+
+    document.getElementById(
+        "currentResult"
+    ).previousElementSibling.innerText =
+        "Renting";
+
+
+    document.getElementById(
+        "save30Result"
+    ).previousElementSibling.innerText =
+        "Buying";
+
+
+    document.getElementById(
+        "save25Result"
+    ).previousElementSibling.innerText =
+        "Risk Scenario";
+
+
+    document.getElementById(
+        "currentResult"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalRent
+        ).toLocaleString("en-IN");
+
+
+    document.getElementById(
+        "save30Result"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalBuy
+        ).toLocaleString("en-IN");
+
+
+    document.getElementById(
+        "save25Result"
+    ).innerText =
+        "₹" +
+        Math.round(
+            totalRisk
+        ).toLocaleString("en-IN");
+
+
+    /* =================================
+       LEGEND
+    ================================= */
+
+    const legendItems =
+        document.querySelectorAll(
+            ".legend-item"
+        );
+
+
+    if (legendItems.length >= 3) {
+
+        legendItems[0].innerHTML =
+            '<span class="dot blue"></span>' +
+            'Renting';
+
+        legendItems[1].innerHTML =
+            '<span class="dot green"></span>' +
+            'Buying';
+
+        legendItems[2].innerHTML =
+            '<span class="dot orange"></span>' +
+            'Risk Scenario';
+    }
+
+
+    /* =================================
+       AI RECOMMENDATION
+    ================================= */
+
+    recommendationTitle.innerText =
+    "Buy vs Rent Scenario Analysis";
+
+    recommendationText.innerText =
+    "The simulation uses your actual income and expenses as the financial baseline and compares renting, buying and a higher-cost risk scenario over five years.";
+
+    recommendationImpact.innerText =
+    "Simulation Based";
+
+    updateRecommendations("Buy vs Rent");
+    updateWellbeingForScenario("Buy vs Rent");
+
+}
+
+
+
+
+/* =====================================================
+   FITNESS ROUTINE
+===================================================== */
+
+function activateFitness() {
+
+    /* =================================
+       ACTUAL USER HABIT DATA
+    ================================= */
+
+    const currentProductivity =
+        {{ expected_productivity | tojson }};
+
+    const improvedProductivity =
+        {{ best_productivity | tojson }};
+
+    const riskProductivity =
+        {{ risk_productivity | tojson }};
+
+    const expectedData =
+        {{ productivity_expected_graph | tojson }};
+
+    const bestData =
+        {{ productivity_best_graph | tojson }};
+
+    const riskData =
+        {{ productivity_risk_graph | tojson }};
+
+
+    /* =================================
+       UPDATE CHART
+    ================================= */
+
+    simulationChart.data.datasets = [
+
+        {
+            label: "Expected",
+            data: expectedData,
+            borderColor: "#2563eb",
+            backgroundColor:
+                "rgba(37, 99, 235, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Best",
+            data: bestData,
+            borderColor: "#16a34a",
+            backgroundColor:
+                "rgba(22, 163, 74, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Risk",
+            data: riskData,
+            borderColor: "#f59e0b",
+            backgroundColor:
+                "rgba(245, 158, 11, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        }
+
+    ];
+
+
+    /* =================================
+       Y AXIS
+    ================================= */
+
+    simulationChart.options.scales.y.title.text =
+        "Productivity Score";
+
+    simulationChart.options.scales.y.max =
+        100;
+
+
+    /* =================================
+       TOOLTIP
+    ================================= */
+
+    simulationChart.options.plugins.tooltip.callbacks.label =
+        function(context) {
+
+            return (
+                context.dataset.label +
+                ": " +
+                context.parsed.y +
+                " points"
+            );
+
+        };
+
+
+    simulationChart.update();
+
+
+    /* =================================
+       TITLE
+    ================================= */
+
+    chartTitle.innerText =
+        "Fitness & Productivity Projection (5 Years)";
+
+
+    /* =================================
+       SCENARIO STATUS
+    ================================= */
+
+    scenarioStatus.innerHTML = `
+
+        <strong>
+            Selected Scenario:
+        </strong>
+
+        Fitness Routine
+
+        <br><br>
+
+        Expected Productivity:
+        ${currentProductivity.toFixed(2)}
+        points
+
+        <br>
+
+        Best Scenario:
+        ${improvedProductivity.toFixed(2)}
+        points
+
+        <br>
+
+        Risk Scenario:
+        ${riskProductivity.toFixed(2)}
+        points
+
+        <br><br>
+
+        Projection Period:
+        5 Years
+
+    `;
+
+
+    /* =================================
+       RESULT CARDS
+    ================================= */
+
+    document.getElementById(
+        "currentResult"
+    ).previousElementSibling.innerText =
+        "Expected";
+
+
+    document.getElementById(
+        "save30Result"
+    ).previousElementSibling.innerText =
+        "Best";
+
+
+    document.getElementById(
+        "save25Result"
+    ).previousElementSibling.innerText =
+        "Risk";
+
+
+    document.getElementById(
+        "currentResult"
+    ).innerText =
+        currentProductivity.toFixed(2)
+        + " points";
+
+
+    document.getElementById(
+        "save30Result"
+    ).innerText =
+        improvedProductivity.toFixed(2)
+        + " points";
+
+
+    document.getElementById(
+        "save25Result"
+    ).innerText =
+        riskProductivity.toFixed(2)
+        + " points";
+
+
+    /* =================================
+       LEGEND
+    ================================= */
+
+    const legendItems =
+        document.querySelectorAll(
+            ".legend-item"
+        );
+
+
+    if (legendItems.length >= 3) {
+
+        legendItems[0].innerHTML =
+            '<span class="dot blue"></span>' +
+            'Expected';
+
+        legendItems[1].innerHTML =
+            '<span class="dot green"></span>' +
+            'Best';
+
+        legendItems[2].innerHTML =
+            '<span class="dot orange"></span>' +
+            'Risk';
+
+    }
+
+
+    /* =================================
+       AI RECOMMENDATION
+    ================================= */
+
+    recommendationTitle.innerText =
+        "Fitness Recommendation";
+
+
+    if (currentProductivity === 0) {
+
+        recommendationText.innerText =
+            "Add habit records to generate a personalized fitness and productivity simulation.";
+
+        recommendationImpact.innerText =
+            "Data Required";
+
+    }
+
+    else {
+
+        recommendationText.innerText =
+            "The fitness simulation uses your historical habit data as the baseline. Improving exercise and habit consistency can move productivity toward the best-case scenario.";
+
+        recommendationImpact.innerText =
+            "Positive Impact";
+
+    }
+
+
+    /* =================================
+       UPDATE DYNAMIC RECOMMENDATIONS
+    ================================= */
+
+    updateRecommendations("Fitness");
+    updateWellbeingForScenario("Fitness");
+    
+
+}
+/* =====================================================
+   UPDATE WELL-BEING
+===================================================== */
+
+function updateWellbeingForScenario(scenario) {
+
+    selectedWellbeingScenario = scenario;
+
+    const actualWellbeing =
+        {{ wellbeing_score | tojson }};
+
+    let improvedScore = actualWellbeing;
+    let improvedGrowth = 2;
+
+    if (scenario === "Savings") {
+        improvedScore = Math.min(actualWellbeing + 10, 100);
+        improvedGrowth = 2;
+    }
+
+    else if (scenario === "MBA") {
+        improvedScore = Math.min(actualWellbeing + 8, 100);
+        improvedGrowth = 2;
+    }
+
+    else if (scenario === "Buy vs Rent") {
+        improvedScore = Math.min(actualWellbeing + 5, 100);
+        improvedGrowth = 1.5;
+    }
+
+    else if (scenario === "Fitness") {
+        improvedScore = Math.min(actualWellbeing + 15, 100);
+        improvedGrowth = 3;
+    }
+
+    else if (scenario === "Study") {
+        improvedScore = Math.min(actualWellbeing + 10, 100);
+        improvedGrowth = 2;
+    }
+
+    let currentData = [];
+    let improvedData = [];
+
+    for (let year = 1; year <= 5; year++) {
+
+        let current =
+            Math.min(actualWellbeing + (year - 1), 100);
+
+        let improved =
+            Math.min(
+                improvedScore + (year - 1) * improvedGrowth,
+                100
+            );
+
+        currentData.push(Math.round(current));
+        improvedData.push(Math.round(improved));
+    }
+
+    if (wellbeingChart === null) {
+
+        const canvas =
+            document.getElementById("wellbeingChart");
+
+        if (!canvas) {
+            console.error("Well-being canvas not found");
+            return;
+        }
+
+        const ctx = canvas.getContext("2d");
+
+        wellbeingChart = new Chart(ctx, {
+
+            type: "line",
+
+            data: {
+
+                labels: [
+                    "Year 1",
+                    "Year 2",
+                    "Year 3",
+                    "Year 4",
+                    "Year 5"
+                ],
+
+                datasets: [
+
+                    {
+                        label: "Current / Expected",
+                        data: currentData,
+                        borderColor: "#2563eb",
+                        backgroundColor: "rgba(37, 99, 235, 0.10)",
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5
+                    },
+
+                    {
+                        label: "Improved Scenario",
+                        data: improvedData,
+                        borderColor: "#16a34a",
+                        backgroundColor: "rgba(22, 163, 74, 0.10)",
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5
+                    }
+
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    mode: "index",
+                    intersect: false
+                },
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function(context) {
+
+                                return (
+                                    context.dataset.label +
+                                    ": " +
+                                    context.parsed.y +
+                                    " points"
+                                );
+
+                            }
+
+                        }
+
+                    }
+
+                },
+
+                scales: {
+
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Years"
+                        }
+                    },
+
+                    y: {
+
+                        beginAtZero: true,
+                        min: 0,
+                        max: 100,
+
+                        ticks: {
+                            stepSize: 20
+                        },
+
+                        title: {
+                            display: true,
+                            text: "Well-being Score"
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    wellbeingChart.data.datasets[0].data = currentData;
+    wellbeingChart.data.datasets[1].data = improvedData;
+
+    wellbeingChart.update();
+
+
+    document.getElementById(
+        "currentWellbeingResult"
+    ).innerText = currentData[0];
+
+
+    document.getElementById(
+        "improvedWellbeingResult"
+    ).innerText = improvedData[0];
+
+
+    document.getElementById(
+        "wellbeingImprovementResult"
+    ).innerText =
+        "+" + (improvedData[0] - currentData[0]);
+
+
+    scenarioStatus.innerHTML = `
+        <strong>Selected Scenario:</strong>
+        ${scenario}
+
+        <br><br>
+
+        Current / Expected Score:
+        ${currentData[0]}
+
+        <br>
+
+        Improved Scenario Score:
+        ${improvedData[0]}
+
+        <br>
+
+        Potential Improvement:
+        +${improvedData[0] - currentData[0]} points
+
+        <br><br>
+
+        Projection Period:
+        5 Years
+    `;
+
+    recommendationTitle.innerText =
+        scenario + " - Well-being Recommendation";
+
+    recommendationText.innerText =
+        "Your actual well-being score is used as the baseline. The " +
+        scenario +
+        " scenario simulates how this decision could affect future well-being.";
+
+    recommendationImpact.innerText =
+        "Simulation Based";
+}
+/* =================================
+   STUDY SIMULATION
+================================= */
+
+function activateStudy() {
+
+    const expectedStudy =
+        {{ expected_study | tojson }};
+
+    const bestStudy =
+        {{ best_study | tojson }};
+
+    const riskStudy =
+        {{ risk_study | tojson }};
+
+    const expectedData =
+        {{ study_expected_graph | tojson }};
+
+    const bestData =
+        {{ study_best_graph | tojson }};
+
+    const riskData =
+        {{ study_risk_graph | tojson }};
+
+
+    /* =================================
+       UPDATE CHART
+    ================================= */
+
+    simulationChart.data.datasets = [
+
+        {
+            label: "Expected",
+            data: expectedData,
+            borderColor: "#2563eb",
+            backgroundColor:
+                "rgba(37, 99, 235, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Best",
+            data: bestData,
+            borderColor: "#16a34a",
+            backgroundColor:
+                "rgba(22, 163, 74, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        },
+
+        {
+            label: "Risk",
+            data: riskData,
+            borderColor: "#f59e0b",
+            backgroundColor:
+                "rgba(245, 158, 11, 0.10)",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+        }
+
+    ];
+
+
+    /* =================================
+       Y AXIS
+    ================================= */
+
+    simulationChart.options.scales.y.title.text =
+        "Study Hours";
+
+    simulationChart.options.scales.y.beginAtZero =
+        true;
+
+
+    /* =================================
+       TOOLTIP
+    ================================= */
+
+    simulationChart.options.plugins.tooltip.callbacks.label =
+        function(context) {
+
+            return (
+                context.dataset.label +
+                ": " +
+                Number(
+                    context.parsed.y
+                ).toLocaleString("en-IN") +
+                " hours"
+            );
+
+        };
+
+
+    simulationChart.update();
+
+
+    /* =================================
+       TITLE
+    ================================= */
+
+    chartTitle.innerText =
+        "Study Performance Projection (5 Years)";
+
+
+    /* =================================
+       SCENARIO STATUS
+    ================================= */
+
+    scenarioStatus.innerHTML = `
+
+        <strong>
+            Selected Scenario:
+        </strong>
+
+        Study Improvement
+
+        <br><br>
+
+        Expected Daily Study:
+        ${expectedStudy.toFixed(2)} hours
+
+        <br>
+
+        Best Scenario:
+        ${bestStudy.toFixed(2)} hours
+
+        <br>
+
+        Risk Scenario:
+        ${riskStudy.toFixed(2)} hours
+
+        <br><br>
+
+        Projection Period:
+        5 Years
+
+    `;
+
+
+    /* =================================
+       RESULT CARDS
+    ================================= */
+
+    document.getElementById(
+        "currentResult"
+    ).previousElementSibling.innerText =
+        "Expected";
+
+
+    document.getElementById(
+        "save30Result"
+    ).previousElementSibling.innerText =
+        "Best";
+
+
+    document.getElementById(
+        "save25Result"
+    ).previousElementSibling.innerText =
+        "Risk";
+
+
+    document.getElementById(
+        "currentResult"
+    ).innerText =
+        expectedStudy.toFixed(2) +
+        " hours";
+
+
+    document.getElementById(
+        "save30Result"
+    ).innerText =
+        bestStudy.toFixed(2) +
+        " hours";
+
+
+    document.getElementById(
+        "save25Result"
+    ).innerText =
+        riskStudy.toFixed(2) +
+        " hours";
+
+
+    /* =================================
+       LEGEND
+    ================================= */
+
+    const legendItems =
+        document.querySelectorAll(
+            ".legend-item"
+        );
+
+
+    if (legendItems.length >= 3) {
+
+        legendItems[0].innerHTML =
+            '<span class="dot blue"></span>' +
+            'Expected';
+
+        legendItems[1].innerHTML =
+            '<span class="dot green"></span>' +
+            'Best';
+
+        legendItems[2].innerHTML =
+            '<span class="dot orange"></span>' +
+            'Risk';
+    }
+
+
+    /* =================================
+       AI RECOMMENDATION
+    ================================= */
+
+    recommendationTitle.innerText =
+        "Study Recommendation";
+
+
+    if (expectedStudy === 0) {
+
+        recommendationText.innerText =
+            "Add historical study records to generate a personalized study simulation.";
+
+        recommendationImpact.innerText =
+            "Data Required";
+
+    }
+
+    else {
+
+        recommendationText.innerText =
+            "Your study simulation uses your historical study records as the baseline. Improving study consistency can move the future trend toward the best-case scenario.";
+
+        recommendationImpact.innerText =
+            "Positive Impact";
+    }
+
+
+    /* =================================
+       UPDATE GENERAL RECOMMENDATIONS
+    ================================= */
+
+    updateRecommendations("Study");
+    updateWellbeingForScenario("Study");
+
+}
+
+
+/* =====================================================
+   FINANCIAL TAB
+===================================================== */
+
+function showFinancial() {
+
+    document.getElementById(
+        "financialSection"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "wellbeingSection"
+    ).style.display =
+        "none";
+
+
+    const tabs =
+        document.querySelectorAll(".tab");
+
+
+    tabs[0].classList.add(
+        "active"
+    );
+
+
+    tabs[1].classList.remove(
+        "active"
+    );
+
+
+    /* Resize financial chart */
+
+    setTimeout(
+        function() {
+
+            simulationChart.resize();
+
+            simulationChart.update();
+
+        },
+        100
+    );
+
+}
+
+
+/* =====================================================
+   WELL-BEING TAB
+===================================================== */
+
+function showWellbeing() {
+
+    document.getElementById(
+        "financialSection"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "wellbeingSection"
+    ).style.display =
+        "block";
+
+
+    const tabs =
+        document.querySelectorAll(".tab");
+
+
+    tabs[0].classList.remove(
+        "active"
+    );
+
+
+    tabs[1].classList.add(
+        "active"
+    );
+
+
+    /* Create / update Well-being chart */
+
+    updateWellbeingForScenario(
+        selectedWellbeingScenario
+    );
+
+
+    /* Resize after section becomes visible */
+
+    setTimeout(
+        function() {
+
+            if (
+                wellbeingChart
+            ) {
+
+                wellbeingChart.resize();
+
+                wellbeingChart.update();
+
+            }
+
+        },
+        200
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | PersonaFlow</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef4ff, #f8f9fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .container {
+            width: 850px;
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(30, 50, 90, 0.15);
+        }
+
+        .left {
+            background: linear-gradient(145deg, #2563eb, #4f46e5);
+            color: white;
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+
+        .left h1 {
+            font-size: 34px;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .left p {
+            color: #dbeafe;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .features {
+            margin-top: 35px;
+        }
+
+        .features div {
+            margin: 15px 0;
+            color: #eff6ff;
+            font-size: 13px;
+        }
+
+        .right {
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right h2 {
+            font-size: 28px;
+            color: #172033;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #7b8494;
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #3f4857;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #dce2ea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb18;
+        }
+
+        .button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .register {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #7b8494;
+        }
+
+        .register a {
+            color: #2563eb;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .secure {
+            text-align: center;
+            margin-top: 25px;
+            color: #8b95a5;
+            font-size: 11px;
+        }
+
+        @media(max-width: 700px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .left {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left">
+
+        <div class="logo">
+            ◈ PersonaFlow
+        </div>
+
+        <h1>
+            Welcome back.
+        </h1>
+
+        <p>
+            Continue managing your personal profile,
+            financial activities, study patterns and
+            daily habits.
+        </p>
+
+        <div class="features">
+            <div>✓ Personalized user profile</div>
+            <div>✓ Finance & expense tracking</div>
+            <div>✓ Study activity tracking</div>
+            <div>✓ Habit monitoring</div>
+            <div>✓ Secure activity history</div>
+        </div>
+
+    </div>
+
+
+    <div class="right">
+
+        <h2>Welcome Back</h2>
+
+        <p class="subtitle">
+            Sign in to access your personal dashboard.
+        </p>
+
+
+        <form method="POST" action="/login">
+
+            <div class="form-group">
+
+                <label>Email Address</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required>
+
+            </div>
+
+
+            <button class="button" type="submit">
+                Login →
+            </button>
+
+        </form>
+
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="/register">
+                Create Account
+            </a>
+
+        </div>
+
+
+        <div class="secure">
+            🔒 Your account information is securely protected.
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
