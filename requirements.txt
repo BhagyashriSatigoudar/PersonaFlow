@@ -1,4 +1,7 @@
 Flask
 psycopg2-binary
 Werkzeug
+pandas
+scikit-learn
+google-genai
 gunicorn
